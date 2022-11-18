@@ -3750,6 +3750,10 @@ var ASM_CONSTS = {
           console.log("jsConsoleLogInt:" + param);
       }
 
+  function _showMeTheAnswer() {
+          return jsShowMeTheAnswer();
+      }
+
   function __isLeapYear(year) {
         return year%4 === 0 && (year%100 !== 0 || year%400 === 0);
     }
@@ -4308,6 +4312,7 @@ var asmLibraryArg = {
   "fd_write": _fd_write,
   "jsAdd": _jsAdd,
   "jsConsoleLogInt": _jsConsoleLogInt,
+  "showMeTheAnswer": _showMeTheAnswer,
   "strftime_l": _strftime_l
 };
 var asm = createWasm();
@@ -4319,6 +4324,9 @@ var _jsCallCpp = Module["_jsCallCpp"] = createExportWrapper("jsCallCpp");
 
 /** @type {function(...*):?} */
 var _add = Module["_add"] = createExportWrapper("add");
+
+/** @type {function(...*):?} */
+var _func = Module["_func"] = createExportWrapper("func");
 
 /** @type {function(...*):?} */
 var _printTheAnswer = Module["_printTheAnswer"] = createExportWrapper("printTheAnswer");
@@ -4368,10 +4376,10 @@ var stackRestore = Module["stackRestore"] = createExportWrapper("stackRestore");
 var stackAlloc = Module["stackAlloc"] = createExportWrapper("stackAlloc");
 
 /** @type {function(...*):?} */
-var dynCall_viijii = Module["dynCall_viijii"] = createExportWrapper("dynCall_viijii");
+var dynCall_jiji = Module["dynCall_jiji"] = createExportWrapper("dynCall_jiji");
 
 /** @type {function(...*):?} */
-var dynCall_jiji = Module["dynCall_jiji"] = createExportWrapper("dynCall_jiji");
+var dynCall_viijii = Module["dynCall_viijii"] = createExportWrapper("dynCall_viijii");
 
 /** @type {function(...*):?} */
 var dynCall_iiiiij = Module["dynCall_iiiiij"] = createExportWrapper("dynCall_iiiiij");

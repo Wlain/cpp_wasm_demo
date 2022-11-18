@@ -4,8 +4,10 @@ mergeInto(LibraryManager.library, {
         console.log("jsAdd");
         return a + b;
     },
-
     jsConsoleLogInt: function (param) {
         console.log("jsConsoleLogInt:" + param);
-    }
+    },
+    showMeTheAnswer: function () {
+        return jsShowMeTheAnswer();
+    },
 })

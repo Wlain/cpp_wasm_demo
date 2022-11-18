@@ -40,9 +40,14 @@ void cppCallJsTest() {
   emscripten_run_script(printScript);
 }
 
-// capi_js.cc
 EM_PORT_API(int) jsAdd(int a, int b);
 EM_PORT_API(void) jsConsoleLogInt(int param);
+
+EM_PORT_API(int) showMeTheAnswer();
+
+EM_PORT_API(void) func() {
+  printf("%d\n", showMeTheAnswer());
+}
 
 EM_PORT_API(void) printTheAnswer() {
   int i = jsAdd(21, 21);

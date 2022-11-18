@@ -7,11 +7,23 @@
 <body>
 
 <script>
+
+    function f1() {
+        var answer = 42;
+        function f2() {
+            return answer;
+        }
+        return f2;
+    }
+    var jsShowMeTheAnswer = f1();
+
     Module = {};
     Module.onRuntimeInitialized = function () {
         console.log(Module._jsCallCpp());
         console.log(Module._add(1, 1));
         Module._printTheAnswer();
+        console.log("js:_func called");
+        Module._func();
     }
 </script>
 <script async type="text/javascript" src="testDemo.js"></script>
