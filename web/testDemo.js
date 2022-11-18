@@ -1199,7 +1199,15 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  
+  15484: () => { console.log('你好，Emscripten！') },  
+ 15522: () => { var k = 42; console.log('The answer is:', k); },  
+ 15568: () => { var k = 42; console.log('The answer is:', k); },  
+ 15614: ($0, $1, $2) => { return $0 + $1 + $2; },  
+ 15639: ($0, $1) => { console.log('addr of buf:', $0); console.log('sqrt(pi):', $1); },  
+ 15706: ($0, $1) => { return $0 * $1; },  
+ 15726: function() { console.log('arguments count:', arguments.length); for (var i = 0; i < arguments.length; i++) { console.log('$', i, ':', arguments[i]); } },  
+ 15868: () => { return 42 },  
+ 15878: () => { return 3.14159 }
 };
 
 
@@ -1275,6 +1283,42 @@ var ASM_CONSTS = {
   function _abort() {
       abort('native code called abort()');
     }
+
+  var readAsmConstArgsArray = [];
+  function readAsmConstArgs(sigPtr, buf) {
+      // Nobody should have mutated _readAsmConstArgsArray underneath us to be something else than an array.
+      assert(Array.isArray(readAsmConstArgsArray));
+      // The input buffer is allocated on the stack, so it must be stack-aligned.
+      assert(buf % 16 == 0);
+      readAsmConstArgsArray.length = 0;
+      var ch;
+      // Most arguments are i32s, so shift the buffer pointer so it is a plain
+      // index into HEAP32.
+      buf >>= 2;
+      while (ch = HEAPU8[sigPtr++]) {
+        var chr = String.fromCharCode(ch);
+        var validChars = ['d', 'f', 'i'];
+        assert(validChars.includes(chr), 'Invalid character ' + ch + '("' + chr + '") in readAsmConstArgs! Use only [' + validChars + '], and do not specify "v" for void return argument.');
+        // Floats are always passed as doubles, and doubles and int64s take up 8
+        // bytes (two 32-bit slots) in memory, align reads to these:
+        buf += (ch != 105/*i*/) & buf;
+        readAsmConstArgsArray.push(
+          ch == 105/*i*/ ? HEAP32[buf] :
+         HEAPF64[buf++ >> 1]
+        );
+        ++buf;
+      }
+      return readAsmConstArgsArray;
+    }
+  function _emscripten_asm_const_int(code, sigPtr, argbuf) {
+      var args = readAsmConstArgs(sigPtr, argbuf);
+      if (!ASM_CONSTS.hasOwnProperty(code)) abort('No EM_ASM constant found at address ' + code);
+      return ASM_CONSTS[code].apply(null, args);
+    }
+  function _emscripten_asm_const_double(code, sigPtr, argbuf) {
+      return _emscripten_asm_const_int(code, sigPtr, argbuf);
+    }
+
 
   function _emscripten_memcpy_big(dest, src, num) {
       HEAPU8.copyWithin(dest, src, src + num);
@@ -4133,6 +4177,84 @@ var ASM_CONSTS = {
       quit_(1, e);
     }
 
+  function getCFunc(ident) {
+      var func = Module['_' + ident]; // closure exported function
+      assert(func, 'Cannot call unknown function ' + ident + ', make sure it is exported');
+      return func;
+    }
+  
+    /**
+     * @param {string|null=} returnType
+     * @param {Array=} argTypes
+     * @param {Arguments|Array=} args
+     * @param {Object=} opts
+     */
+  function ccall(ident, returnType, argTypes, args, opts) {
+      // For fast lookup of conversion functions
+      var toC = {
+        'string': (str) => {
+          var ret = 0;
+          if (str !== null && str !== undefined && str !== 0) { // null string
+            // at most 4 bytes per UTF-8 code point, +1 for the trailing '\0'
+            var len = (str.length << 2) + 1;
+            ret = stackAlloc(len);
+            stringToUTF8(str, ret, len);
+          }
+          return ret;
+        },
+        'array': (arr) => {
+          var ret = stackAlloc(arr.length);
+          writeArrayToMemory(arr, ret);
+          return ret;
+        }
+      };
+  
+      function convertReturnValue(ret) {
+        if (returnType === 'string') {
+          
+          return UTF8ToString(ret);
+        }
+        if (returnType === 'boolean') return Boolean(ret);
+        return ret;
+      }
+  
+      var func = getCFunc(ident);
+      var cArgs = [];
+      var stack = 0;
+      assert(returnType !== 'array', 'Return type should not be "array".');
+      if (args) {
+        for (var i = 0; i < args.length; i++) {
+          var converter = toC[argTypes[i]];
+          if (converter) {
+            if (stack === 0) stack = stackSave();
+            cArgs[i] = converter(args[i]);
+          } else {
+            cArgs[i] = args[i];
+          }
+        }
+      }
+      var ret = func.apply(null, cArgs);
+      function onDone(ret) {
+        if (stack !== 0) stackRestore(stack);
+        return convertReturnValue(ret);
+      }
+  
+      ret = onDone(ret);
+      return ret;
+    }
+
+  
+    /**
+     * @param {string=} returnType
+     * @param {Array=} argTypes
+     * @param {Object=} opts
+     */
+  function cwrap(ident, returnType, argTypes, opts) {
+      return function() {
+        return ccall(ident, returnType, argTypes, arguments, opts);
+      }
+    }
+
   var FSNode = /** @constructor */ function(parent, name, mode, rdev) {
     if (!parent) {
       parent = this;  // root node sets parent to itself
@@ -4309,6 +4431,8 @@ function checkIncomingModuleAPI() {
 }
 var asmLibraryArg = {
   "abort": _abort,
+  "emscripten_asm_const_double": _emscripten_asm_const_double,
+  "emscripten_asm_const_int": _emscripten_asm_const_int,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
   "emscripten_resize_heap": _emscripten_resize_heap,
   "emscripten_run_script": _emscripten_run_script,
@@ -4384,6 +4508,15 @@ var _sum = Module["_sum"] = createExportWrapper("sum");
 var _getCppString = Module["_getCppString"] = createExportWrapper("getCppString");
 
 /** @type {function(...*):?} */
+var _addDouble = Module["_addDouble"] = createExportWrapper("addDouble");
+
+/** @type {function(...*):?} */
+var _sumUint8 = Module["_sumUint8"] = createExportWrapper("sumUint8");
+
+/** @type {function(...*):?} */
+var _getString = Module["_getString"] = createExportWrapper("getString");
+
+/** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 
 /** @type {function(...*):?} */
@@ -4442,7 +4575,8 @@ var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall
 
 // === Auto-generated postamble setup entry stuff ===
 
-
+Module["ccall"] = ccall;
+Module["cwrap"] = cwrap;
 var unexportedRuntimeSymbols = [
   'run',
   'UTF8ArrayToString',
@@ -4542,8 +4676,6 @@ var unexportedRuntimeSymbols = [
   'convertI32PairToI53Checked',
   'convertU32PairToI53',
   'getCFunc',
-  'ccall',
-  'cwrap',
   'uleb128Encode',
   'sigToWasmTypes',
   'generateFuncType',
@@ -4703,7 +4835,6 @@ var missingLibrarySymbols = [
   'getHostByName',
   'traverseStack',
   'convertPCtoSourceLocation',
-  'readAsmConstArgs',
   'mainThreadEM_ASM',
   'jstoi_q',
   'jstoi_s',
@@ -4727,9 +4858,6 @@ var missingLibrarySymbols = [
   'readI53FromU64',
   'convertI32PairToI53',
   'convertU32PairToI53',
-  'getCFunc',
-  'ccall',
-  'cwrap',
   'uleb128Encode',
   'sigToWasmTypes',
   'generateFuncType',

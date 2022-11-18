@@ -72,8 +72,39 @@
         // js获取cpp的字符串
         var ptr = Module._getCppString();
         var str = UTF8ToString(ptr);
-        console.log(typeof(str));
+        console.log(typeof (str));
         console.log(str);
+        // var result = Module.ccall(ident, returnType, argTypes, args);
+        // ccall的优势在于可以直接使用字符串/Uint8Array/Int8Array作为参数
+        var result = Module.ccall('addDouble', 'number', ['number', 'number'], [13.0, 42]);
+        console.log("result is " + result);
+
+        //ccall_wrap.html
+        var str = 'The answer is:55';
+        Module.ccall('printString', 'null', ['string'], [str]);
+
+        var count = 50;
+        var buf = new ArrayBuffer(count * 4);
+        var i8 = new Uint8Array(buf);
+        var i32 = new Int32Array(buf);
+        for (var i = 0; i < count; i++) {
+            i32[i] = i + 1;
+        }
+        result = Module.ccall('sum', 'number', ['array', 'number'], [i8, count]);
+        console.log("result is " + result);
+
+        console.log(Module.ccall('getString', 'string'));
+
+        // 为此cwrap进行了进一步封装 :var func = Module.cwrap(ident, returnType, argTypes);
+        var add = Module.cwrap('add', 'number', ['number', 'number']);
+        var print_string = Module.cwrap('printString', 'null', ['string']);
+        var sum = Module.cwrap('sum', 'number', ['array', 'number']);
+        var getString = Module.cwrap('getString', 'string');
+
+        console.log(add(25.0, 41));
+        print_string(str);
+        console.log(getString());
+        console.log(sum(i8, count));
     }
 </script>
 <script async type="text/javascript" src="testDemo.js"></script>

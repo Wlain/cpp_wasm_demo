@@ -33,3 +33,10 @@ this is a demo for webAssemably
 * C调用了由JavaScript实现的函数，通过注入函数的参数传出
 
 #### allocateUTF8：该方法将在C/C内存中分配足够大的空间，并将字符串按UTF8格式拷入其中
+
+
+#### JavaScript调用C/C++时只能使用Number作为参数，因此如果参数是字符串、数组等非Number类型，则需要拆分为以下步骤：
+* 使用Module._malloc()在Module堆中分配内存，获取地址ptr；
+* 将字符串/数组等数据拷入内存的ptr处；
+* 将ptr作为参数，调用C/C++函数进行处理；
+* 使用Module._free()释放ptr。
