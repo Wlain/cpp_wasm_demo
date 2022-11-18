@@ -45,13 +45,24 @@ EM_PORT_API(void) jsConsoleLogInt(int param);
 
 EM_PORT_API(int) showMeTheAnswer();
 
-EM_PORT_API(void) func() {
-  printf("%d\n", showMeTheAnswer());
-}
+EM_PORT_API(void) func() { printf("%d\n", showMeTheAnswer()); }
 
 EM_PORT_API(void) printTheAnswer() {
   int i = jsAdd(21, 21);
   jsConsoleLogInt(i);
+}
+
+int g_int = 42;
+double g_double = 3.1415926;
+
+EM_PORT_API(int *) getIntPtr() { return &g_int; }
+
+EM_PORT_API(double *) getDoublePtr() { return &g_double; }
+
+EM_PORT_API(void) printData() {
+  std::cout << "cpp value {g_int} is:" << g_int << std::endl;
+  std::cout << "cpp value {g_double} is:" << g_double << std::endl; // 这是一个坑，会变成整数
+  printf("C{g_double:%lf}\n", g_double);
 }
 
 int main() {

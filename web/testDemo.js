@@ -4332,6 +4332,15 @@ var _func = Module["_func"] = createExportWrapper("func");
 var _printTheAnswer = Module["_printTheAnswer"] = createExportWrapper("printTheAnswer");
 
 /** @type {function(...*):?} */
+var _getIntPtr = Module["_getIntPtr"] = createExportWrapper("getIntPtr");
+
+/** @type {function(...*):?} */
+var _getDoublePtr = Module["_getDoublePtr"] = createExportWrapper("getDoublePtr");
+
+/** @type {function(...*):?} */
+var _printData = Module["_printData"] = createExportWrapper("printData");
+
+/** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 
 /** @type {function(...*):?} */

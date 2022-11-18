@@ -22,8 +22,22 @@
         console.log(Module._jsCallCpp());
         console.log(Module._add(1, 1));
         Module._printTheAnswer();
+        // js 使用闭包的demo
         console.log("js:_func called");
         Module._func();
+
+        // 在JavaScript中访问C/C++内存的demo
+        var intPtr = Module._getIntPtr();
+        var intValue = Module.HEAP32[intPtr >> 2];
+        console.log("JS{intValue:" + intValue + "}");
+
+        var doublePtr = Module._getDoublePtr();
+        var doubleValue = Module.HEAPF64[doublePtr >> 3];
+        console.log("JS{doubleValue:" + doubleValue + "}");
+
+        Module.HEAP32[intPtr >> 2] = 13;
+        Module.HEAPF64[doublePtr >> 3] = 123456.789;
+        Module._printData();
     }
 </script>
 <script async type="text/javascript" src="testDemo.js"></script>
