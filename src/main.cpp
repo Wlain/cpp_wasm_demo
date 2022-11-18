@@ -51,6 +51,5 @@ EM_PORT_API(void) printTheAnswer() {
 
 int main() {
   cppCallJsTest();
-  printTheAnswer();
   return 0;
 }
