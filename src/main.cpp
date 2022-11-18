@@ -149,6 +149,30 @@ EM_PORT_API(void) theButtonIsClicked() {
   std::cout << "the Button Is Clicked" << std::endl;
 }
 
+
+void msgLoop() {
+	static int count = 0;
+	if (count % 60 == 0) {
+		printf("count:%d\n", count);
+	}
+	count++;
+}
+
+EM_PORT_API(void) pauseMainLoop() {
+	emscripten_pause_main_loop();
+	printf("pauseMainLoop called()\n");
+}
+
+EM_PORT_API(void) resumeMainLoop() {
+	emscripten_resume_main_loop();
+	printf("resumeMainLoop called()\n");
+}
+
+EM_PORT_API(void) cancelMainLoop() {
+	emscripten_cancel_main_loop();
+	printf("cancelMainLoop called()\n");
+}
+
 int main() {
   cppCallJsTest();
   // call js use micro:EM_ASM宏只能执行嵌入的JavaScript代码,
@@ -187,5 +211,6 @@ int main() {
   printf("The answer is:%d\n", answer);
   double pi_js = EM_ASM_DOUBLE_V(return 3.14159);
   printf("PI:%lf\n", pi_js);
+  emscripten_set_main_loop(msgLoop, 0, 1);
   return 0;
 }

@@ -5,12 +5,23 @@
     <title>Title</title>
 </head>
 <body>
-<button id=btn_test onclick=Test()>test</button>
+<button id=btn_test onclick=Test() disabled = true>test</button>
+<button id = pause onclick=Pause() disabled = true>Pause</button>
+<button id = resume onclick=Resume() disabled = true>Resume</button>
+<button id = cancel onclick=Cancel() disabled = true>Cancel</button>
 <script>
     function Test() {
         console.log(Module._theButtonIsClicked())
     }
-
+    function Pause() {
+        Module._pauseMainLoop();
+    }
+    function Resume() {
+        Module._resumeMainLoop();
+    }
+    function Cancel() {
+        Module._cancelMainLoop();
+    }
     function f1() {
         var answer = 42;
 
@@ -25,6 +36,10 @@
 
     Module = {};
     Module.onRuntimeInitialized = function () {
+        document.getElementById("pause").disabled = false;
+        document.getElementById("resume").disabled = false;
+        document.getElementById("cancel").disabled = false;
+        document.getElementById("btn_test").disabled = false;
         console.log(Module._jsCallCpp());
         console.log(Module._add(1, 1));
         Module._printTheAnswer();
