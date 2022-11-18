@@ -10,11 +10,14 @@
 
     function f1() {
         var answer = 42;
+
         function f2() {
             return answer;
         }
+
         return f2;
     }
+
     var jsShowMeTheAnswer = f1();
 
     Module = {};
@@ -28,7 +31,7 @@
 
         // 在JavaScript中访问C/C++内存的demo
         var intPtr = Module._getIntPtr();
-        var intValue = Module.HEAP32[intPtr >> 2];
+        var intValue = Module.HEAP32[intPtr >> 2]; // 由于Module.HEAP32每个元素占用4字节，因此int_ptr需除以4（既右移2位）方为正确的索引
         console.log("JS{intValue:" + intValue + "}");
 
         var doublePtr = Module._getDoublePtr();
@@ -38,6 +41,39 @@
         Module.HEAP32[intPtr >> 2] = 13;
         Module.HEAPF64[doublePtr >> 3] = 123456.789;
         Module._printData();
+        // js 与C++进行数据交换
+        Module._printInt(3.4);
+        Module._printInt(4.6);
+        Module._printInt(-3.4);
+        Module._printInt(-4.6);
+        Module._printFloat(2000000.03125);
+        Module._printDouble(2000000.03125);
+
+        var ptr = Module._fibonacci(10);
+        if (ptr == 0) return;
+        var str = '';
+        for (var i = 0; i < 10; i++) {
+            str += Module.HEAP32[(ptr >> 2) + i];
+            str += ' ';
+        }
+        console.log(str);
+        Module._freeBuf(ptr);
+        Module._fibonacci20();
+
+        // JavaScript分配了内存，并存入自然数列前50项，然后调用C函数sum()求数列的和
+        var count = 50;
+        var ptr = Module._malloc(4 * count);
+        for (var i = 0; i < count; i++) {
+            Module.HEAP32[ptr / 4 + i] = i + 1;
+        }
+        console.log(Module._sum(ptr, count));
+        Module._free(ptr);
+
+        // js获取cpp的字符串
+        var ptr = Module._getCppString();
+        var str = UTF8ToString(ptr);
+        console.log(typeof(str));
+        console.log(str);
     }
 </script>
 <script async type="text/javascript" src="testDemo.js"></script>

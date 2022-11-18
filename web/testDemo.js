@@ -3750,6 +3750,15 @@ var ASM_CONSTS = {
           console.log("jsConsoleLogInt:" + param);
       }
 
+  function _jsPrintFib(ptr, count) {
+          var str = 'jsPrintFib: ';
+          for (var i = 0; i < count; i++) {
+              str += Module.HEAP32[(ptr >> 2) + i];
+              str += ' ';
+          }
+          console.log(str);
+      }
+
   function _showMeTheAnswer() {
           return jsShowMeTheAnswer();
       }
@@ -4312,6 +4321,7 @@ var asmLibraryArg = {
   "fd_write": _fd_write,
   "jsAdd": _jsAdd,
   "jsConsoleLogInt": _jsConsoleLogInt,
+  "jsPrintFib": _jsPrintFib,
   "showMeTheAnswer": _showMeTheAnswer,
   "strftime_l": _strftime_l
 };
@@ -4341,6 +4351,39 @@ var _getDoublePtr = Module["_getDoublePtr"] = createExportWrapper("getDoublePtr"
 var _printData = Module["_printData"] = createExportWrapper("printData");
 
 /** @type {function(...*):?} */
+var _printInt = Module["_printInt"] = createExportWrapper("printInt");
+
+/** @type {function(...*):?} */
+var _printFloat = Module["_printFloat"] = createExportWrapper("printFloat");
+
+/** @type {function(...*):?} */
+var _printString = Module["_printString"] = createExportWrapper("printString");
+
+/** @type {function(...*):?} */
+var _printDouble = Module["_printDouble"] = createExportWrapper("printDouble");
+
+/** @type {function(...*):?} */
+var _fibonacci = Module["_fibonacci"] = createExportWrapper("fibonacci");
+
+/** @type {function(...*):?} */
+var _malloc = Module["_malloc"] = createExportWrapper("malloc");
+
+/** @type {function(...*):?} */
+var _freeBuf = Module["_freeBuf"] = createExportWrapper("freeBuf");
+
+/** @type {function(...*):?} */
+var _free = Module["_free"] = createExportWrapper("free");
+
+/** @type {function(...*):?} */
+var _fibonacci20 = Module["_fibonacci20"] = createExportWrapper("fibonacci20");
+
+/** @type {function(...*):?} */
+var _sum = Module["_sum"] = createExportWrapper("sum");
+
+/** @type {function(...*):?} */
+var _getCppString = Module["_getCppString"] = createExportWrapper("getCppString");
+
+/** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 
 /** @type {function(...*):?} */
@@ -4348,12 +4391,6 @@ var ___errno_location = Module["___errno_location"] = createExportWrapper("__err
 
 /** @type {function(...*):?} */
 var _fflush = Module["_fflush"] = createExportWrapper("fflush");
-
-/** @type {function(...*):?} */
-var _malloc = Module["_malloc"] = createExportWrapper("malloc");
-
-/** @type {function(...*):?} */
-var _free = Module["_free"] = createExportWrapper("free");
 
 /** @type {function(...*):?} */
 var _emscripten_stack_init = Module["_emscripten_stack_init"] = function() {
