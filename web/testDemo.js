@@ -1199,15 +1199,15 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  15484: () => { console.log('你好，Emscripten！') },  
- 15522: () => { var k = 42; console.log('The answer is:', k); },  
- 15568: () => { var k = 42; console.log('The answer is:', k); },  
- 15614: ($0, $1, $2) => { return $0 + $1 + $2; },  
- 15639: ($0, $1) => { console.log('addr of buf:', $0); console.log('sqrt(pi):', $1); },  
- 15706: ($0, $1) => { return $0 * $1; },  
- 15726: function() { console.log('arguments count:', arguments.length); for (var i = 0; i < arguments.length; i++) { console.log('$', i, ':', arguments[i]); } },  
- 15868: () => { return 42 },  
- 15878: () => { return 3.14159 }
+  15500: () => { console.log('你好，Emscripten！') },  
+ 15538: () => { var k = 42; console.log('The answer is:', k); },  
+ 15584: () => { var k = 42; console.log('The answer is:', k); },  
+ 15630: ($0, $1, $2) => { return $0 + $1 + $2; },  
+ 15655: ($0, $1) => { console.log('addr of buf:', $0); console.log('sqrt(pi):', $1); },  
+ 15722: ($0, $1) => { return $0 * $1; },  
+ 15742: function() { console.log('arguments count:', arguments.length); for (var i = 0; i < arguments.length; i++) { console.log('$', i, ':', arguments[i]); } },  
+ 15884: () => { return 42 },  
+ 15894: () => { return 3.14159 }
 };
 
 
@@ -4515,6 +4515,9 @@ var _sumUint8 = Module["_sumUint8"] = createExportWrapper("sumUint8");
 
 /** @type {function(...*):?} */
 var _getString = Module["_getString"] = createExportWrapper("getString");
+
+/** @type {function(...*):?} */
+var _theButtonIsClicked = Module["_theButtonIsClicked"] = createExportWrapper("theButtonIsClicked");
 
 /** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");

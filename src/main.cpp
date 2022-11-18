@@ -144,6 +144,11 @@ EM_PORT_API(const char *) getString() {
   const static char str[] = "getString called This is a test.";
   return str;
 }
+
+EM_PORT_API(void) theButtonIsClicked() {
+  std::cout << "the Button Is Clicked" << std::endl;
+}
+
 int main() {
   cppCallJsTest();
   // call js use micro:EM_ASM宏只能执行嵌入的JavaScript代码,

@@ -5,8 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-
+<button id=btn_test onclick=Test()>test</button>
 <script>
+    function Test() {
+        console.log(Module._theButtonIsClicked())
+    }
 
     function f1() {
         var answer = 42;
