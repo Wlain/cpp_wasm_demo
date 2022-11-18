@@ -3741,6 +3741,15 @@ var ASM_CONSTS = {
   }
   }
 
+  function _jsAdd(a, b) {
+          console.log("jsAdd");
+          return a + b;
+      }
+
+  function _jsConsoleLogInt(param) {
+          console.log("jsConsoleLogInt:" + param);
+      }
+
   function __isLeapYear(year) {
         return year%4 === 0 && (year%100 !== 0 || year%400 === 0);
     }
@@ -4297,6 +4306,8 @@ var asmLibraryArg = {
   "fd_read": _fd_read,
   "fd_seek": _fd_seek,
   "fd_write": _fd_write,
+  "jsAdd": _jsAdd,
+  "jsConsoleLogInt": _jsConsoleLogInt,
   "strftime_l": _strftime_l
 };
 var asm = createWasm();
@@ -4308,6 +4319,9 @@ var _jsCallCpp = Module["_jsCallCpp"] = createExportWrapper("jsCallCpp");
 
 /** @type {function(...*):?} */
 var _add = Module["_add"] = createExportWrapper("add");
+
+/** @type {function(...*):?} */
+var _printTheAnswer = Module["_printTheAnswer"] = createExportWrapper("printTheAnswer");
 
 /** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
