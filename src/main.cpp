@@ -222,36 +222,23 @@ cancelMainLoop()
     printf("cancelMainLoop called()\n");
 }
 
-void setupNodefs()
+EM_PORT_API(void)
+openFile()
 {
-    EM_ASM(
-        FS.mkdir('/data');
-        FS.mount(NODEFS, { root : '.' }, '/data'););
-}
-
-void openFile()
-{
-    FILE* fp = fopen("/data/nodefs_data.txt", "r+t");
-    if (fp == nullptr) fp = fopen("/data/nodefs_data.txt", "w+t");
-    int count = 0;
-    if (fp)
+    FILE* file = fopen("data.txt", "rb");
+    if (!file)
     {
-        fscanf(fp, "%d", &count);
-        count++;
-        fseek(fp, 0, SEEK_SET);
-        fprintf(fp, "%d", count);
-        fclose(fp);
-        printf("count:%d\n", count);
+        puts("could not open file");
     }
-    else
-    {
-        printf("fopen failed.\n");
-    }
+    char buffer[512];
+    auto res = fread(buffer, sizeof(char), 256, file);
+    printf("fread -> '%s'\n", buffer);
+    puts("could open file");
+    fclose(file);
 }
 
 int main()
 {
-    setupNodefs();
     openFile();
     cppCallJsTest();
     // call js use micro:EM_ASM宏只能执行嵌入的JavaScript代码,
