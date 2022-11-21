@@ -1,8 +1,9 @@
+#include <fstream>
 #include <iostream>
-
 #ifndef EM_PORT_API
 #if defined(__EMSCRIPTEN__)
 #include <emscripten.h>
+#include <emscripten/bind.h>
 #if defined(__cplusplus)
 #define EM_PORT_API(rettype) extern "C" rettype EMSCRIPTEN_KEEPALIVE
 #else
@@ -225,8 +226,7 @@ cancelMainLoop()
 void setupNodefs()
 {
     EM_ASM(
-        FS.mkdir('/data');
-        FS.mount(NODEFS, { root : '.' }, '/data'););
+        FS.mount(NODEFS, { root : '.' }, '/'););
 }
 
 void openFile()
@@ -249,48 +249,90 @@ void openFile()
     }
 }
 
+EM_PORT_API(void)
+openFiles()
+{
+    FILE* file = fopen("nodefs_data.txt", "rb");
+    if (!file)
+    {
+        puts("could not open file");
+    }
+    char buffer[512];
+    auto res = fread(buffer, sizeof(char), 256, file);
+    printf("fread -> '%s'\n", buffer);
+    puts("could open file");
+    fclose(file);
+}
+
+EM_PORT_API(void) inputFile(const char* fileName)
+{
+    EM_ASM(
+        FS.mkdir('/temp');                           // (1)
+        FS.mount(NODEFS, { root : '.' }, '/temp');); // (2)
+    std::ifstream in(std::string("/temp/") + fileName);
+    if (in.fail())
+    {
+        std::cerr << "ERROR, Could not open " << fileName << std::endl;
+        exit(1);
+    }
+    if (in)
+    {
+        std::string contents;
+        in.seekg(0, std::ios::end);
+        auto size = in.tellg();
+        if (size > 0)
+        {
+            contents.resize((std::string::size_type)size);
+            in.seekg(0, std::ios::beg);
+            in.read(&contents[0], contents.size());
+        }
+        in.close();
+        std::cout << contents.c_str() << std::endl;
+    }
+}
 int main()
 {
-    setupNodefs();
-    openFile();
-    cppCallJsTest();
-    // call js use micro:EM_ASM宏只能执行嵌入的JavaScript代码,
-    // 无法传入参数或获取返回结果
-    EM_ASM(console.log('你好，Emscripten！'));
-    EM_ASM(var k = 42; console.log('The answer is:', k););
-    EM_ASM(var k = 42; // define k
-           console.log('The answer is:', k););
-    // EM_ASM_支持输入数值类型的可变参数
-    int sum = EM_ASM_({ return $0 + $1 + $2; }, 1, 2, 3);
-    printf("sum(1, 2, 3): %d\n", sum);
-
-    char buf[32];
-    double pi = 3.14159;
-    EM_ASM_(
-        {
-            console.log('addr of buf:', $0);
-            console.log('sqrt(pi):', $1);
-        },
-        buf, sqrt(pi));
-    // EM_ASM_DOUBLE用法与EM_ASM_基本一致，区别是EM_ASM_DOUBLE返回值为double
-    double pi2 = EM_ASM_DOUBLE({ return $0 * $1; }, pi, 2.0);
-    printf("pi2: %lf\n", pi2);
-
-    EM_ASM_(
-        {
-            console.log('arguments count:', arguments.length);
-            for (var i = 0; i < arguments.length; i++)
-            {
-                console.log('$', i, ':', arguments[i]);
-            }
-        },
-        42, 13);
-
-    //如果嵌入的JavaScript代码不需要参数，可以使用EM_ASM_INT_V/EM_ASM_DOUBLE_V宏
-    int answer = EM_ASM_INT_V(return 42);
-    printf("The answer is:%d\n", answer);
-    double pi_js = EM_ASM_DOUBLE_V(return 3.14159);
-    printf("PI:%lf\n", pi_js);
-    emscripten_set_main_loop(msgLoop, 0, 1);
+    inputFile("data/nodefs_data.txt");
+    //    setupNodefs();
+    //    openFiles();
+    //    cppCallJsTest();
+    //    // call js use micro:EM_ASM宏只能执行嵌入的JavaScript代码,
+    //    // 无法传入参数或获取返回结果
+    //    EM_ASM(console.log('你好，Emscripten！'));
+    //    EM_ASM(var k = 42; console.log('The answer is:', k););
+    //    EM_ASM(var k = 42; // define k
+    //           console.log('The answer is:', k););
+    //    // EM_ASM_支持输入数值类型的可变参数
+    //    int sum = EM_ASM_({ return $0 + $1 + $2; }, 1, 2, 3);
+    //    printf("sum(1, 2, 3): %d\n", sum);
+    //
+    //    char buf[32];
+    //    double pi = 3.14159;
+    //    EM_ASM_(
+    //        {
+    //            console.log('addr of buf:', $0);
+    //            console.log('sqrt(pi):', $1);
+    //        },
+    //        buf, sqrt(pi));
+    //    // EM_ASM_DOUBLE用法与EM_ASM_基本一致，区别是EM_ASM_DOUBLE返回值为double
+    //    double pi2 = EM_ASM_DOUBLE({ return $0 * $1; }, pi, 2.0);
+    //    printf("pi2: %lf\n", pi2);
+    //
+    //    EM_ASM_(
+    //        {
+    //            console.log('arguments count:', arguments.length);
+    //            for (var i = 0; i < arguments.length; i++)
+    //            {
+    //                console.log('$', i, ':', arguments[i]);
+    //            }
+    //        },
+    //        42, 13);
+    //
+    //    //如果嵌入的JavaScript代码不需要参数，可以使用EM_ASM_INT_V/EM_ASM_DOUBLE_V宏
+    //    int answer = EM_ASM_INT_V(return 42);
+    //    printf("The answer is:%d\n", answer);
+    //    double pi_js = EM_ASM_DOUBLE_V(return 3.14159);
+    //    printf("PI:%lf\n", pi_js);
+    //    emscripten_set_main_loop(msgLoop, 0, 1);
     return 0;
 }
