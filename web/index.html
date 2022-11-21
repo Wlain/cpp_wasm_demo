@@ -5,127 +5,129 @@
     <title>Title</title>
 </head>
 <body>
-<button id=btn_test onclick=Test() disabled = true>test</button>
-<button id = pause onclick=Pause() disabled = true>Pause</button>
-<button id = resume onclick=Resume() disabled = true>Resume</button>
-<button id = cancel onclick=Cancel() disabled = true>Cancel</button>
+<!--<button id=btn_test onclick=Test() disabled = true>test</button>-->
+<!--<button id = pause onclick=Pause() disabled = true>Pause</button>-->
+<!--<button id = resume onclick=Resume() disabled = true>Resume</button>-->
+<!--<button id = cancel onclick=Cancel() disabled = true>Cancel</button>-->
+<!--<script>-->
+<!--    function Test() {-->
+<!--        console.log(Module._theButtonIsClicked())-->
+<!--    }-->
+<!--    function Pause() {-->
+<!--        Module._pauseMainLoop();-->
+<!--    }-->
+<!--    function Resume() {-->
+<!--        Module._resumeMainLoop();-->
+<!--    }-->
+<!--    function Cancel() {-->
+<!--        Module._cancelMainLoop();-->
+<!--    }-->
+<!--    function f1() {-->
+<!--        var answer = 42;-->
+
+<!--        function f2() {-->
+<!--            return answer;-->
+<!--        }-->
+
+<!--        return f2;-->
+<!--    }-->
+
+<!--    var jsShowMeTheAnswer = f1();-->
+
+<!--    Module = {};-->
+<!--    Module.onRuntimeInitialized = function () {-->
+<!--        document.getElementById("pause").disabled = false;-->
+<!--        document.getElementById("resume").disabled = false;-->
+<!--        document.getElementById("cancel").disabled = false;-->
+<!--        document.getElementById("btn_test").disabled = false;-->
+<!--        console.log(Module._jsCallCpp());-->
+<!--        console.log(Module._add(1, 1));-->
+<!--        Module._printTheAnswer();-->
+<!--        // js 使用闭包的demo-->
+<!--        console.log("js:_func called");-->
+<!--        Module._func();-->
+
+<!--        // 在JavaScript中访问C/C++内存的demo-->
+<!--        var intPtr = Module._getIntPtr();-->
+<!--        var intValue = Module.HEAP32[intPtr >> 2]; // 由于Module.HEAP32每个元素占用4字节，因此int_ptr需除以4（既右移2位）方为正确的索引-->
+<!--        console.log("JS{intValue:" + intValue + "}");-->
+
+<!--        var doublePtr = Module._getDoublePtr();-->
+<!--        var doubleValue = Module.HEAPF64[doublePtr >> 3];-->
+<!--        console.log("JS{doubleValue:" + doubleValue + "}");-->
+
+<!--        Module.HEAP32[intPtr >> 2] = 13;-->
+<!--        Module.HEAPF64[doublePtr >> 3] = 123456.789;-->
+<!--        Module._printData();-->
+<!--        // js 与C++进行数据交换-->
+<!--        Module._printInt(3.4);-->
+<!--        Module._printInt(4.6);-->
+<!--        Module._printInt(-3.4);-->
+<!--        Module._printInt(-4.6);-->
+<!--        Module._printFloat(2000000.03125);-->
+<!--        Module._printDouble(2000000.03125);-->
+
+<!--        var ptr = Module._fibonacci(10);-->
+<!--        if (ptr == 0) return;-->
+<!--        var str = '';-->
+<!--        for (var i = 0; i < 10; i++) {-->
+<!--            str += Module.HEAP32[(ptr >> 2) + i];-->
+<!--            str += ' ';-->
+<!--        }-->
+<!--        console.log(str);-->
+<!--        Module._freeBuf(ptr);-->
+<!--        Module._fibonacci20();-->
+
+<!--        // JavaScript分配了内存，并存入自然数列前50项，然后调用C函数sum()求数列的和-->
+<!--        var count = 50;-->
+<!--        var ptr = Module._malloc(4 * count);-->
+<!--        for (var i = 0; i < count; i++) {-->
+<!--            Module.HEAP32[ptr / 4 + i] = i + 1;-->
+<!--        }-->
+<!--        console.log(Module._sum(ptr, count));-->
+<!--        Module._free(ptr);-->
+
+<!--        // js获取cpp的字符串-->
+<!--        var ptr = Module._getCppString();-->
+<!--        var str = UTF8ToString(ptr);-->
+<!--        console.log(typeof (str));-->
+<!--        console.log(str);-->
+<!--        // var result = Module.ccall(ident, returnType, argTypes, args);-->
+<!--        // ccall的优势在于可以直接使用字符串/Uint8Array/Int8Array作为参数-->
+<!--        var result = Module.ccall('addDouble', 'number', ['number', 'number'], [13.0, 42]);-->
+<!--        console.log("result is " + result);-->
+
+<!--        //ccall_wrap.html-->
+<!--        var str = 'The answer is:55';-->
+<!--        Module.ccall('printString', 'null', ['string'], [str]);-->
+
+<!--        var count = 50;-->
+<!--        var buf = new ArrayBuffer(count * 4);-->
+<!--        var i8 = new Uint8Array(buf);-->
+<!--        var i32 = new Int32Array(buf);-->
+<!--        for (var i = 0; i < count; i++) {-->
+<!--            i32[i] = i + 1;-->
+<!--        }-->
+<!--        result = Module.ccall('sum', 'number', ['array', 'number'], [i8, count]);-->
+<!--        console.log("result is " + result);-->
+
+<!--        console.log(Module.ccall('getString', 'string'));-->
+
+<!--        // 为此cwrap进行了进一步封装 :var func = Module.cwrap(ident, returnType, argTypes);-->
+<!--        var add = Module.cwrap('add', 'number', ['number', 'number']);-->
+<!--        var print_string = Module.cwrap('printString', 'null', ['string']);-->
+<!--        var sum = Module.cwrap('sum', 'number', ['array', 'number']);-->
+<!--        var getString = Module.cwrap('getString', 'string');-->
+
+<!--        console.log(add(25.0, 41));-->
+<!--        print_string(str);-->
+<!--        console.log(getString());-->
+<!--        console.log(sum(i8, count));-->
+<!--    }-->
+<!--</script>-->
 <script>
-    function Test() {
-        console.log(Module._theButtonIsClicked())
-    }
-    function Pause() {
-        Module._pauseMainLoop();
-    }
-    function Resume() {
-        Module._resumeMainLoop();
-    }
-    function Cancel() {
-        Module._cancelMainLoop();
-    }
-    function f1() {
-        var answer = 42;
-
-        function f2() {
-            return answer;
-        }
-
-        return f2;
-    }
-
-    var jsShowMeTheAnswer = f1();
-
-    Module = {};
-    Module.onRuntimeInitialized = function () {
-        document.getElementById("pause").disabled = false;
-        document.getElementById("resume").disabled = false;
-        document.getElementById("cancel").disabled = false;
-        document.getElementById("btn_test").disabled = false;
-        console.log(Module._jsCallCpp());
-        console.log(Module._add(1, 1));
-        Module._printTheAnswer();
-        // js 使用闭包的demo
-        console.log("js:_func called");
-        Module._func();
-
-        // 在JavaScript中访问C/C++内存的demo
-        var intPtr = Module._getIntPtr();
-        var intValue = Module.HEAP32[intPtr >> 2]; // 由于Module.HEAP32每个元素占用4字节，因此int_ptr需除以4（既右移2位）方为正确的索引
-        console.log("JS{intValue:" + intValue + "}");
-
-        var doublePtr = Module._getDoublePtr();
-        var doubleValue = Module.HEAPF64[doublePtr >> 3];
-        console.log("JS{doubleValue:" + doubleValue + "}");
-
-        Module.HEAP32[intPtr >> 2] = 13;
-        Module.HEAPF64[doublePtr >> 3] = 123456.789;
-        Module._printData();
-        // js 与C++进行数据交换
-        Module._printInt(3.4);
-        Module._printInt(4.6);
-        Module._printInt(-3.4);
-        Module._printInt(-4.6);
-        Module._printFloat(2000000.03125);
-        Module._printDouble(2000000.03125);
-
-        var ptr = Module._fibonacci(10);
-        if (ptr == 0) return;
-        var str = '';
-        for (var i = 0; i < 10; i++) {
-            str += Module.HEAP32[(ptr >> 2) + i];
-            str += ' ';
-        }
-        console.log(str);
-        Module._freeBuf(ptr);
-        Module._fibonacci20();
-
-        // JavaScript分配了内存，并存入自然数列前50项，然后调用C函数sum()求数列的和
-        var count = 50;
-        var ptr = Module._malloc(4 * count);
-        for (var i = 0; i < count; i++) {
-            Module.HEAP32[ptr / 4 + i] = i + 1;
-        }
-        console.log(Module._sum(ptr, count));
-        Module._free(ptr);
-
-        // js获取cpp的字符串
-        var ptr = Module._getCppString();
-        var str = UTF8ToString(ptr);
-        console.log(typeof (str));
-        console.log(str);
-        // var result = Module.ccall(ident, returnType, argTypes, args);
-        // ccall的优势在于可以直接使用字符串/Uint8Array/Int8Array作为参数
-        var result = Module.ccall('addDouble', 'number', ['number', 'number'], [13.0, 42]);
-        console.log("result is " + result);
-
-        //ccall_wrap.html
-        var str = 'The answer is:55';
-        Module.ccall('printString', 'null', ['string'], [str]);
-
-        var count = 50;
-        var buf = new ArrayBuffer(count * 4);
-        var i8 = new Uint8Array(buf);
-        var i32 = new Int32Array(buf);
-        for (var i = 0; i < count; i++) {
-            i32[i] = i + 1;
-        }
-        result = Module.ccall('sum', 'number', ['array', 'number'], [i8, count]);
-        console.log("result is " + result);
-
-        console.log(Module.ccall('getString', 'string'));
-
-        // 为此cwrap进行了进一步封装 :var func = Module.cwrap(ident, returnType, argTypes);
-        var add = Module.cwrap('add', 'number', ['number', 'number']);
-        var print_string = Module.cwrap('printString', 'null', ['string']);
-        var sum = Module.cwrap('sum', 'number', ['array', 'number']);
-        var getString = Module.cwrap('getString', 'string');
-
-        console.log(add(25.0, 41));
-        print_string(str);
-        console.log(getString());
-        console.log(sum(i8, count));
-        FS.writeFile("/Users/william/git/learning/cpp_wasm_demo/web/testfile.txt", "a=1\nb=2\n");
-        console.log(" FS.writeFile(\"testfile.txt\", \"a=1\\nb=2\\n\");")
-    }
+    // FS.mkdir("/rootDir");
+    // FS.mount( module.NODEFS, { root: "H:"} ,"/rootDir");
 </script>
 <script async type="text/javascript" src="testDemo.js"></script>
 </body>
