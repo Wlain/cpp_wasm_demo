@@ -251,8 +251,6 @@ void openFile()
 
 int main()
 {
-    setupNodefs();
-    openFile();
     cppCallJsTest();
     // call js use micro:EM_ASM宏只能执行嵌入的JavaScript代码,
     // 无法传入参数或获取返回结果
