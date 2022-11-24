@@ -47,13 +47,37 @@
     JavaScript 能改变 HTML 元素的样式。
 </p>
 <script>
-    function myFunction()
-    {
-        x=document.getElementById("demo1") // 找到元素
-        x.style.color="#ff0000";          // 改变样式
+    function myFunction() {
+        x = document.getElementById("demo1") // 找到元素
+        x.style.color = "#ff0000";          // 改变样式
     }
 </script>
 <button type="button" onclick="myFunction()">点击这里</button>
+
+<p>请输入数字。如果输入值不是数字，浏览器会弹出提示框。</p>
+<input id="demo2" type="text">
+<script>
+    function myFunction2() {
+        var x = document.getElementById("demo2").value;
+        if (x === "" || isNaN(x)) {
+            alert("不是数字");
+        }
+    }
+</script>
+<button type="button" onclick="myFunction2()">点击这里</button>
+
+<p>请输入数字。如果输入值不是数字，浏览器会弹出提示框。</p>
+<input id="demo3" type="text">
+<script>
+    function myFunction3()
+    {
+        var x=document.getElementById("demo3").value;
+        if(isNaN(x)||x.replace(/(^\s*)|(\s*$)/g,"")==""){
+            alert("不是数字");
+        }
+    }
+</script>
+<button type="button" onclick="myFunction3()">点击这里</button>
 
 </body>
 </html>
